@@ -3,6 +3,7 @@ from pathlib import Path
 PROJECT_DIR = Path(__file__).parent.resolve()
 STORAGE_DIR = PROJECT_DIR / 'storage'
 LOGS_DIR = STORAGE_DIR / 'logs'
+CHECKPOINTS_DIR = STORAGE_DIR / 'checkpoints'
 
 EMBEDDINGS_DIR = STORAGE_DIR / 'embeddings'
 

@@ -9,7 +9,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import loggers as pl_loggers
 
 
-from embeddings_model.settings import LOGS_DIR
+from embeddings_model.settings import LOGS_DIR, CHECKPOINTS_DIR
 from embeddings_model.learning.regressor import Regressor
 from embeddings_model.learning.classifier import Classifier
 from embeddings_model.utils.callbacks.time import TimingCallback
@@ -28,7 +28,7 @@ def train_test(datamodule, model, epochs=6, lr=1e-2, experiment_name='default', 
         model = Classifier(model=model, lr=lr, class_dims=class_dims)
 
     csv_logger = pl_loggers.CSVLogger(LOGS_DIR, name=experiment_name)
-    checkpoint_callback = ModelCheckpoint(dirpath='./checkpoints/',
+    checkpoint_callback = ModelCheckpoint(dirpath=CHECKPOINTS_DIR,
         save_top_k=1,
         monitor='valid_loss',
         mode='min'
