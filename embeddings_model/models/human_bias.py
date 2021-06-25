@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class HumanBiasNet(nn.Module):
-    def __init__(self, output_dim, bias_vector_length, text_embedding_dim=768):
+    def __init__(self, output_dim, bias_vector_length, text_embedding_dim=768, **kwargs):
         super().__init__()
         self.text_embedding_dim = text_embedding_dim
         self.fc1 = nn.Linear(text_embedding_dim + bias_vector_length, output_dim) 

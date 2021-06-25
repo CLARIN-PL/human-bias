@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class AnnotatorBiasNet(nn.Module):
     def __init__(self, output_dim, text_embedding_dim, word_num, annotator_num, 
-                    dp=0.0, hidden_dim=100):
+                    dp=0.0, hidden_dim=100, **kwargs):
         super().__init__()
         self.text_embedding_dim = text_embedding_dim
         self.hidden_dim = hidden_dim
