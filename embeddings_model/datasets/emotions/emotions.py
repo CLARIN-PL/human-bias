@@ -1,14 +1,10 @@
 import os
-import zipfile
 import pickle
-from typing import Optional, Tuple
+from typing import Optional, List
 
 import pandas as pd
-import numpy as np
-import urllib
 import torch
-from pytorch_lightning import LightningDataModule
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from embeddings_model.settings import PROJECT_DIR, STORAGE_DIR
 from embeddings_model.datasets.dataset import BatchIndexedDataset
@@ -25,7 +21,7 @@ class EmotionsDataModule(BaseDataModule):
             batch_size: int = 3000,
             embeddings_type: str = 'bert',
             language: str = 'english',
-            split_sizes = [0.55, 0.15, 0.15, 0.15],
+            split_sizes: List[float] = [0.55, 0.15, 0.15, 0.15],
             normalize=False,
             **kwargs,
     ):
