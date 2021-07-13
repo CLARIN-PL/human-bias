@@ -10,12 +10,12 @@ import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, Dataset
 
-from embeddings_model.settings import PROJECT_DIR, STORAGE_DIR
-from embeddings_model.datasets.dataset import BatchIndexedDataset
-from embeddings_model.utils.tokenizer import get_text_data
-from embeddings_model.utils.embeddings import create_embeddings
-from embeddings_model.utils.biases import get_annotator_biases
-from embeddings_model.datasets.datamodule_base import BaseDataModule
+from personalized_nlp.settings import PROJECT_DIR, STORAGE_DIR
+from personalized_nlp.datasets.dataset import BatchIndexedDataset
+from personalized_nlp.utils.tokenizer import get_text_data
+from personalized_nlp.utils.embeddings import create_embeddings
+from personalized_nlp.utils.biases import get_annotator_biases
+from personalized_nlp.datasets.datamodule_base import BaseDataModule
 
 class WikiDataModule(BaseDataModule):
     def __init__(

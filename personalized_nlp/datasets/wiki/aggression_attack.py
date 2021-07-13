@@ -2,9 +2,9 @@ import pandas as pd
 import pickle
 import torch
 
-from embeddings_model.datasets.wiki.base import WikiDataModule
-from embeddings_model.settings import PROJECT_DIR, STORAGE_DIR, AGGRESSION_URL
-from embeddings_model.utils.biases import get_annotator_biases
+from personalized_nlp.datasets.wiki.base import WikiDataModule
+from personalized_nlp.settings import PROJECT_DIR, STORAGE_DIR, AGGRESSION_URL
+from personalized_nlp.utils.biases import get_annotator_biases
 
 class AggressionAttackDataModule(WikiDataModule):
     def __init__(

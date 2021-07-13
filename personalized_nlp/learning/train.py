@@ -7,10 +7,10 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import loggers as pl_loggers
 
 
-from embeddings_model.settings import LOGS_DIR, CHECKPOINTS_DIR
-from embeddings_model.learning.regressor import Regressor
-from embeddings_model.learning.classifier import Classifier
-from embeddings_model.utils.callbacks.time import TimingCallback
+from personalized_nlp.settings import LOGS_DIR, CHECKPOINTS_DIR
+from personalized_nlp.learning.regressor import Regressor
+from personalized_nlp.learning.classifier import Classifier
+from personalized_nlp.utils.callbacks.time import TimingCallback
 
 
 def train_test(datamodule, model, epochs=6, lr=1e-2, experiment_name='default', regression=False,

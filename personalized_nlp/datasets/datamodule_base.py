@@ -5,8 +5,8 @@ import pandas as pd
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, Dataset
 
-from embeddings_model.datasets.dataset import BatchIndexedDataset
-from embeddings_model.utils.embeddings import create_embeddings
+from personalized_nlp.datasets.dataset import BatchIndexedDataset
+from personalized_nlp.utils.embeddings import create_embeddings
 
 class BaseDataModule(LightningDataModule):
 

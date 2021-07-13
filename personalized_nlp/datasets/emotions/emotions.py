@@ -6,12 +6,12 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-from embeddings_model.settings import PROJECT_DIR, STORAGE_DIR
-from embeddings_model.datasets.dataset import BatchIndexedDataset
-from embeddings_model.utils.tokenizer import get_text_data
-from embeddings_model.utils.biases import get_annotator_biases
-from embeddings_model.utils.data_splitting import split_texts
-from embeddings_model.datasets.datamodule_base import BaseDataModule
+from personalized_nlp.settings import PROJECT_DIR, STORAGE_DIR
+from personalized_nlp.datasets.dataset import BatchIndexedDataset
+from personalized_nlp.utils.tokenizer import get_text_data
+from personalized_nlp.utils.biases import get_annotator_biases
+from personalized_nlp.utils.data_splitting import split_texts
+from personalized_nlp.datasets.datamodule_base import BaseDataModule
 
 
 class EmotionsDataModule(BaseDataModule):

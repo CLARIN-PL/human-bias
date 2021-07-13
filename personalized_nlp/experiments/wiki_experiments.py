@@ -3,18 +3,18 @@ import random
 import numpy as np
 import torch
 
-from embeddings_model.learning.train import train_test
-from embeddings_model.settings import LOGS_DIR
-from embeddings_model.models import models as models_dict
-from embeddings_model.datasets.wiki.toxicity import ToxicityDataModule
-from embeddings_model.datasets.wiki.attack import AttackDataModule
-from embeddings_model.datasets.wiki.aggression import AggressionDataModule
-from embeddings_model.models.baseline import Net
-from embeddings_model.models.onehot import NetOneHot
-from embeddings_model.models.human_bias import HumanBiasNet
-from embeddings_model.models.bias import AnnotatorBiasNet
-from embeddings_model.models.annotator import AnnotatorEmbeddingNet
-from embeddings_model.models.annotator_word import AnnotatorWordEmbeddingNet
+from personalized_nlp.learning.train import train_test
+from personalized_nlp.settings import LOGS_DIR
+from personalized_nlp.models import models as models_dict
+from personalized_nlp.datasets.wiki.toxicity import ToxicityDataModule
+from personalized_nlp.datasets.wiki.attack import AttackDataModule
+from personalized_nlp.datasets.wiki.aggression import AggressionDataModule
+from personalized_nlp.models.baseline import Net
+from personalized_nlp.models.onehot import NetOneHot
+from personalized_nlp.models.human_bias import HumanBiasNet
+from personalized_nlp.models.bias import AnnotatorBiasNet
+from personalized_nlp.models.annotator import AnnotatorEmbeddingNet
+from personalized_nlp.models.annotator_word import AnnotatorWordEmbeddingNet
 
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = '2'

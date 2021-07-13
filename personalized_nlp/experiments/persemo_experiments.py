@@ -1,13 +1,13 @@
-from embeddings_model.datasets.emotions.emotions import EmotionsDataModule
+from personalized_nlp.datasets.emotions.emotions import EmotionsDataModule
 from pytorch_lightning import loggers as pl_loggers
-from embeddings_model.settings import STORAGE_DIR, LOGS_DIR
-from embeddings_model.learning.train import train_test
-from embeddings_model.models.annotator_word import AnnotatorWordEmbeddingNet
-from embeddings_model.models.annotator import AnnotatorEmbeddingNet
-from embeddings_model.models.bias import AnnotatorBiasNet
-from embeddings_model.models.human_bias import HumanBiasNet
-from embeddings_model.models.onehot import NetOneHot
-from embeddings_model.models.baseline import Net
+from personalized_nlp.settings import STORAGE_DIR, LOGS_DIR
+from personalized_nlp.learning.train import train_test
+from personalized_nlp.models.annotator_word import AnnotatorWordEmbeddingNet
+from personalized_nlp.models.annotator import AnnotatorEmbeddingNet
+from personalized_nlp.models.bias import AnnotatorBiasNet
+from personalized_nlp.models.human_bias import HumanBiasNet
+from personalized_nlp.models.onehot import NetOneHot
+from personalized_nlp.models.baseline import Net
 import random
 import numpy as np
 import torch

@@ -1,5 +1,5 @@
-from embeddings_model.datasets.wiki.base import WikiDataModule
-from embeddings_model.settings import PROJECT_DIR, STORAGE_DIR, ATTACK_URL
+from personalized_nlp.datasets.wiki.base import WikiDataModule
+from personalized_nlp.settings import PROJECT_DIR, STORAGE_DIR, ATTACK_URL
 
 class AttackDataModule(WikiDataModule):
     def __init__(
