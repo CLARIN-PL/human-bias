@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     for embeddings_type in ['xlmr', 'bert', 'deberta']:
         data_module = EmotionsDataModule(embeddings_type=embeddings_type, normalize=regression,
-                                         batch_size=1000, project='Emotions')
+                                         batch_size=1000)
         data_module.prepare_data()
         data_module.setup()
         data_module.compute_word_stats(
@@ -53,7 +53,8 @@ if __name__ == '__main__':
                     }
 
                     logger = pl_loggers.WandbLogger(
-                        save_dir=LOGS_DIR, config=hparams)
+                        save_dir=LOGS_DIR, config=hparams, project='Emotions', 
+                        log_model=False)
 
                     output_dim = len(data_module.class_dims)
                     text_embedding_dim = data_module.text_embedding_dim
@@ -81,6 +82,6 @@ if __name__ == '__main__':
 
                     train_test(data_module, model, epochs=20, lr=0.008,
                                experiment_name='default', regression=regression,
-                               use_cuda=True, test_fold=fold_num, loggers=logger)
+                               use_cuda=True, test_fold=fold_num, logger=logger)
 
                     logger.experiment.finish()

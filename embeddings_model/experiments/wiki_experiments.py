@@ -61,7 +61,7 @@ if __name__ == '__main__':
                             'regression': regression,
                         }
                         logger = pl_loggers.WandbLogger(
-                            save_dir=LOGS_DIR, config=hparams, project='Wiki')
+                            save_dir=LOGS_DIR, config=hparams, project='Wiki', log_model=False)
 
                         output_dim = 2
                         text_embedding_dim = data_module.text_embedding_dim
@@ -92,6 +92,6 @@ if __name__ == '__main__':
 
                         train_test(data_module, model, epochs=5, lr=0.008,
                                    experiment_name='default', regression=regression,
-                                   use_cuda=True, loggers=logger)
+                                   use_cuda=True, logger=logger)
 
                         logger.experiment.finish()
