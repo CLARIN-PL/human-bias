@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader, Dataset
 from personalized_nlp.datasets.dataset import BatchIndexedDataset
 from personalized_nlp.utils.embeddings import create_embeddings
 
+
 class BaseDataModule(LightningDataModule):
 
     @property
@@ -42,7 +43,9 @@ class BaseDataModule(LightningDataModule):
         elif self.embeddings_type == 'deberta':
             model_name = 'microsoft/deberta-large'
 
-        create_embeddings(texts, embeddings_path, model_name=model_name, use_cuda=True)
+        use_cuda = torch.cuda.is_available()
+        create_embeddings(texts, embeddings_path,
+                          model_name=model_name, use_cuda=use_cuda)
 
     def _prepare_dataloader(self, dataset, shuffle=True):
         if shuffle:
@@ -63,10 +66,11 @@ class BaseDataModule(LightningDataModule):
 
         if test_fold is not None:
             val_fold = (test_fold + 1) % self.folds_num
-            annotations = annotations[~annotations.fold.isin([test_fold, val_fold])]
+            annotations = annotations[~annotations.fold.isin(
+                [test_fold, val_fold])]
 
-
-        train_X, train_y = self._get_data_by_split(annotations, self.train_split_names)
+        train_X, train_y = self._get_data_by_split(
+            annotations, self.train_split_names)
         text_features = self._get_text_features()
         annotator_features = self._get_annotator_features()
 
@@ -82,7 +86,8 @@ class BaseDataModule(LightningDataModule):
             val_fold = (test_fold + 1) % self.folds_num
             annotations = annotations[annotations.fold.isin([val_fold])]
 
-        dev_X, dev_y = self._get_data_by_split(annotations, self.val_split_names)
+        dev_X, dev_y = self._get_data_by_split(
+            annotations, self.val_split_names)
 
         text_features = self._get_text_features()
         annotator_features = self._get_annotator_features()
@@ -98,7 +103,8 @@ class BaseDataModule(LightningDataModule):
         if test_fold is not None:
             annotations = annotations[annotations.fold.isin([test_fold])]
 
-        test_X, test_y = self._get_data_by_split(annotations, self.test_split_names)
+        test_X, test_y = self._get_data_by_split(
+            annotations, self.test_split_names)
         text_features = self._get_text_features()
         annotator_features = self._get_annotator_features()
 
@@ -134,16 +140,19 @@ class BaseDataModule(LightningDataModule):
     def _get_data_by_split(self, annotations: pd.DataFrame, splits: str):
         data = self.data
 
-        df = annotations.loc[annotations.text_id.isin(data[data.split.isin(splits)].text_id.values)]
+        df = annotations.loc[annotations.text_id.isin(
+            data[data.split.isin(splits)].text_id.values)]
         X = df.loc[:, ['text_id', 'annotator_id']]
         y = df[self.annotation_column]
 
-        X['text_id'] = X['text_id'].apply(lambda r_id: self.text_id_idx_dict[r_id])
-        X['annotator_id'] = X['annotator_id'].apply(lambda w_id: self.annotator_id_idx_dict[w_id])
+        X['text_id'] = X['text_id'].apply(
+            lambda r_id: self.text_id_idx_dict[r_id])
+        X['annotator_id'] = X['annotator_id'].apply(
+            lambda w_id: self.annotator_id_idx_dict[w_id])
 
         X, y = X.values, y.values
 
         if y.ndim < 2:
             y = y[:, None]
-            
+
         return X, y
