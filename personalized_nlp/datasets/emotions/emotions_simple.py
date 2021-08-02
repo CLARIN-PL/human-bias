@@ -14,10 +14,10 @@ from personalized_nlp.utils.data_splitting import split_texts
 from personalized_nlp.datasets.datamodule_base import BaseDataModule
 
 
-class EmotionsDataModule(BaseDataModule):
+class EmotionsSimpleDataModule(BaseDataModule):
     def __init__(
             self,
-            data_dir: str = STORAGE_DIR / 'emotions_data/texts/',
+            data_dir: str = STORAGE_DIR / 'emotions_simple_data/texts/',
             batch_size: int = 3000,
             embeddings_type: str = 'bert',
             language: str = 'english',
@@ -51,7 +51,7 @@ class EmotionsDataModule(BaseDataModule):
 
         self.word_stats_annotation_column = 'POBUDZENIE EMOCJONALNE'
         self.embeddings_path = STORAGE_DIR / \
-            f'emotions_data/embeddings/text_id_to_emb_{embeddings_type}_{language}.p'
+            f'emotions_simple_data/embeddings/text_id_to_emb_{embeddings_type}_{language}.p'
 
         self.train_split_names = ['present', 'past']
         self.val_split_names = ['future1']
