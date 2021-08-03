@@ -4,3 +4,4 @@ personalized_nlp/storage/logs
 personalized_nlp/storage/results
 personalized_nlp/storage/emotions_data
 personalized_nlp/storage/wiki_data
+personalized_nlp/storage/emotions_simple_data/embeddings/
