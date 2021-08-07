@@ -42,6 +42,8 @@ class BaseDataModule(LightningDataModule):
             model_name = 'google/t5-large-ssm'
         elif self.embeddings_type == 'deberta':
             model_name = 'microsoft/deberta-large'
+        elif self.embeddings_type == 'labse':
+            model_name = 'sentence-transformers/LaBSE'
 
         use_cuda = torch.cuda.is_available()
         create_embeddings(texts, embeddings_path,
@@ -154,5 +156,20 @@ class BaseDataModule(LightningDataModule):
 
         if y.ndim < 2:
             y = y[:, None]
+
+        return X, y
+
+    def get_X_y(self):
+        annotations = self.annotations.copy()
+        annotations = annotations.merge(self.data)
+        embeddings = self.text_embeddings.to('cpu').numpy()
+
+        annotations['text_idx'] = annotations['text_id'].apply(
+            lambda r_id: self.text_id_idx_dict[r_id])
+        annotations['annotator_idx'] = annotations['annotator_id'].apply(
+            lambda w_id: self.annotator_id_idx_dict[w_id])
+
+        X = np.vstack([embeddings[i] for i in annotations['text_idx'].values])
+        y = annotations[self.annotation_column].values
 
         return X, y
