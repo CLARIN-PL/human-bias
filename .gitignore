@@ -1,5 +1,6 @@
 *.pyc
 .ipynb_checkpoints
+personalized_nlp/storage/*
 personalized_nlp/storage/logs
 personalized_nlp/storage/results
 personalized_nlp/storage/emotions_data
