@@ -8,6 +8,8 @@ from torch.utils.data import DataLoader, Dataset
 from personalized_nlp.datasets.dataset import BatchIndexedDataset
 from personalized_nlp.utils.embeddings import create_embeddings
 
+from personalized_nlp.settings import FASTTEXT_EMBEDDINGS, TRANSFORMERS_EMBEDDINGS
+
 
 class BaseDataModule(LightningDataModule):
 
@@ -23,6 +25,8 @@ class BaseDataModule(LightningDataModule):
     def text_embedding_dim(self):
         if self.embeddings_type in ['xlmr', 'bert']:
             return 768
+        elif self.embeddings_type in FASTTEXT_EMBEDDINGS:
+            return 300
         else:
             return 1024
 
@@ -44,10 +48,20 @@ class BaseDataModule(LightningDataModule):
             model_name = 'microsoft/deberta-large'
         elif self.embeddings_type == 'labse':
             model_name = 'sentence-transformers/LaBSE'
+        elif self.embeddings_type == 'glove':
+            model_name = 'glove'
+        elif self.embeddings_type == 'skipgram':
+            model_name = 'skipgram'
+        elif self.embeddings_type == 'cbow':
+            model_name = 'cbow'
+        else:
+            raise NotImplementedError(f'{self.embeddings_type} is not implemented')
+        
+        is_transformer = self.embeddings_type in TRANSFORMERS_EMBEDDINGS
 
         use_cuda = torch.cuda.is_available()
         create_embeddings(texts, embeddings_path,
-                          model_name=model_name, use_cuda=use_cuda)
+                          model_name=model_name, is_transformer=is_transformer, use_cuda=use_cuda)
 
     def _prepare_dataloader(self, dataset, shuffle=True):
         if shuffle:

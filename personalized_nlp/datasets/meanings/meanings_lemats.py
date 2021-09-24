@@ -14,22 +14,22 @@ from personalized_nlp.utils.data_splitting import split_texts
 from personalized_nlp.datasets.datamodule_base import BaseDataModule
 
 
-class EmotionsDataModule(BaseDataModule):
+class MeaningsLematsDataModule(BaseDataModule):
     def __init__(
             self,
-            data_dir: str = STORAGE_DIR / 'emotions_data/texts/',
+            data_dir: str = STORAGE_DIR / 'emotions_data/meanings/lemmats',
             batch_size: int = 3000,
             embeddings_type: str = 'bert',
-            language: str = 'english',
+            language: str = 'polish',
             split_sizes: List[float] = [0.55, 0.15, 0.15, 0.15],
             normalize=False,
             **kwargs,
     ):
-        super().__init__()
+        super(MeaningsLematsDataModule, self).__init__()
 
         self.folds_num = 10
         self.data_dir = data_dir
-        self.data_path = self.data_dir / 'cawi2_texts_multilang.csv'
+        self.data_path = self.data_dir / 'cawi1_texts.csv'
         self.data_url = None
         self.batch_size = batch_size
         self.split_sizes = split_sizes
@@ -51,7 +51,7 @@ class EmotionsDataModule(BaseDataModule):
 
         self.word_stats_annotation_column = 'POBUDZENIE EMOCJONALNE'
         self.embeddings_path = STORAGE_DIR / \
-            f'emotions_data/embeddings/text_id_to_emb_{embeddings_type}_{language}.p'
+            f'emotions_data/lemmats/embeddings/text_id_to_emb_{embeddings_type}_{language}.p'
 
         self.train_split_names = ['present', 'past']
         self.val_split_names = ['future1']
@@ -69,13 +69,13 @@ class EmotionsDataModule(BaseDataModule):
 
     def prepare_data(self) -> None:
         self.data = pd.read_csv(
-            self.data_dir / 'cawi2_texts_multilang.csv')
-        self.data.loc[:, 'text'] = self.data.loc[:, 'text_' + self.language]
+            self.data_dir / 'cawi1_texts.csv')
+        # self.data.loc[:, 'text'] = self.data.loc[:, 'text']
 
         self.annotations = pd.read_csv(
-            self.data_dir / 'cawi2_annotations.csv').dropna()
+            self.data_dir / 'cawi1_annotations.csv').dropna()
         self.annotators = pd.read_csv(
-            self.data_dir / 'cawi2_annotators.csv')
+            self.data_dir / 'cawi1_annotators.csv', low_memory=False)
 
         if not os.path.exists(self.embeddings_path):
             self._create_embeddings()
@@ -113,8 +113,7 @@ class EmotionsDataModule(BaseDataModule):
                                                                                                       min_word_count=min_word_count,
                                                                                                       min_std=min_std,
                                                                                                       words_per_text=words_per_text,
-                                                                                                      annotation_column=word_stats_annotation_column,
-                                                                                                      text_col=self.text_column)
+                                                                                                      annotation_column=word_stats_annotation_column)
 
     def compute_annotator_biases(self, personal_df: pd.DataFrame):
         annotator_id_df = pd.DataFrame(
