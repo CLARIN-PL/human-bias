@@ -1,3 +1,4 @@
+from tensorflow.keras.preprocessing import text
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
@@ -5,10 +6,10 @@ import pandas as pd
 from scipy.stats import entropy
 
 
-def get_tokenized_texts(data):
+def get_tokenized_texts(data, text_col: str = 'text'):
     """ Tokenize comments"""
     data = data.copy()
-    data['text_clean'] = data['text'].str.replace('NEWLINE_TOKEN', ' ')
+    data['text_clean'] = data[text_col].str.replace('NEWLINE_TOKEN', ' ')
 
     tokenizer = Tokenizer(oov_token='<OOV>')
     tokenizer.fit_on_texts(data.text_clean.tolist())
@@ -70,8 +71,8 @@ def get_tokens_sorted(tokens, tokens_stats, num_tokens=10):
 
 
 def get_text_data(data, annotations, annotation_column,
-                  min_word_count=100, min_std=0.27, words_per_text=10):
-    tokenizer, text_tokenized, idx_to_word = get_tokenized_texts(data)
+                  min_word_count=100, min_std=0.27, words_per_text=10, text_col: str = 'text'):
+    tokenizer, text_tokenized, idx_to_word = get_tokenized_texts(data, text_col)
     
     word_stats = get_word_stats(
         data, annotations, text_tokenized, idx_to_word, annotation_column)

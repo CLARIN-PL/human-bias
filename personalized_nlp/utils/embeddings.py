@@ -1,23 +1,29 @@
 from transformers import AutoTokenizer, AutoModel, AutoModelForMaskedLM
 from transformers import AutoTokenizer, AutoModelForPreTraining
 import torch
+from personalized_nlp.settings import TRANSFORMERS_EMBEDDINGS, FASTTEXT_EMBEDDINGS, FASTTEXT_MODELS_PATHS
+import fasttext
 
 from tqdm import tqdm
 import pickle
 
-def _get_embeddings(texts, tokenizer, model, max_seq_len=256, use_cuda=False):
-    def batch(iterable, n=1):
-        l = len(iterable)
-        for ndx in range(0, l, n):
-            yield iterable[ndx:min(ndx + n, l)]
+def _batch(iterable, n=1):
+    l = len(iterable)
+    for ndx in range(0, l, n):
+        yield iterable[ndx:min(ndx + n, l)]
 
+
+def _get_embeddings_transformers(texts, model_name: str, max_seq_len=256, use_cuda=False) -> torch.Tensor:
     if use_cuda:
         device = 'cuda'
     else:
         device = 'cpu'
 
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModel.from_pretrained(model_name).to(device)
+
     all_embeddings = []
-    for batched_texts in tqdm(batch(texts, 200), total=len(texts)/200):
+    for batched_texts in tqdm(_batch(texts, 200), total=len(texts)/200):
         with torch.no_grad():
             batch_encoding = tokenizer.batch_encode_plus(
                 batched_texts,
@@ -34,20 +40,33 @@ def _get_embeddings(texts, tokenizer, model, max_seq_len=256, use_cuda=False):
         for i in range(emb[0].size()[0]):
             all_embeddings.append(emb[0][i, mask[i] > 0, :].mean(
                 axis=0)[None, :])  # podejscie nr 2 z usrednianiem
-
+    print(all_embeddings[0].shape)
     return torch.cat(all_embeddings, axis=0).to('cpu')
 
 
-def create_embeddings(texts, embeddings_path, model_name='xlm-roberta-base', use_cuda=True,
+def _get_embeddings_fasttext(texts, model_name: str, use_cuda: bool) -> torch.Tensor:
+    def _pad_tokens(token: torch.Tensor):
+        pass
+    model = fasttext.load_model(FASTTEXT_MODELS_PATHS[model_name])
+    all_embeddings = []
+    for batched_text in tqdm(texts):
+        with torch.no_grad():
+            emb = torch.tensor(model.get_sentence_vector(batched_text), dtype=torch.float32).unsqueeze(0)
+        all_embeddings.append(emb)
+    print(all_embeddings[0].shape)
+    return torch.cat(all_embeddings, axis=0).to('cpu')
+
+
+def create_embeddings(texts, embeddings_path, model_name='xlm-roberta-base', is_transformer: bool = True, use_cuda=True,
                         pickle_embeddings=True):
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModel.from_pretrained(model_name)
 
-    if use_cuda:
-        model = model.to('cuda')
+    if is_transformer:
+        embeddings = _get_embeddings_transformers(texts, model_name, use_cuda=use_cuda)
+    else:
+        embeddings = _get_embeddings_fasttext(texts, model_name, use_cuda)
 
-    embeddings = _get_embeddings(texts, tokenizer, model, use_cuda=use_cuda)
-
+    #print(embeddings.shape)
+    #raise None
     text_idx_to_emb = {}
     for i in range(embeddings.size(0)):
         text_idx_to_emb[i] = embeddings[i].numpy()
