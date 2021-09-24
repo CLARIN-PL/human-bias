@@ -4,12 +4,13 @@ import numpy as np
 
 from personalized_nlp.settings import STORAGE_DIR
 from personalized_nlp.datasets.wiki.aggression import AggressionDataModule
+from personalized_nlp.datasets.meanings.meanings import MeaningsDataModule
 
 from sklearn.model_selection import cross_val_score
 from sklearn import svm
 
 if __name__ == '__main__':
-    data_module = AggressionDataModule(embeddings_type='xlmr')
+    data_module = MeaningsDataModule(embeddings_type='xlmr')
     data_module.prepare_data()
     data_module.setup()
 

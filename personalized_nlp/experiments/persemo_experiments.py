@@ -1,6 +1,7 @@
-from personalized_nlp.datasets.emotions.emotions import EmotionsDataModule
+from personalized_nlp.datasets.meanings.meanings_lemats import MeaningsLematsDataModule
+from personalized_nlp.datasets.meanings.meanings_collocations import MeaningsCollocationsDataModule
 from pytorch_lightning import loggers as pl_loggers
-from personalized_nlp.settings import STORAGE_DIR, LOGS_DIR
+from personalized_nlp.settings import STORAGE_DIR, LOGS_DIR, TRANSFORMERS_EMBEDDINGS, FASTTEXT_EMBEDDINGS
 from personalized_nlp.learning.train import train_test
 from personalized_nlp.models.annotator_word import AnnotatorWordEmbeddingNet
 from personalized_nlp.models.annotator import AnnotatorEmbeddingNet
@@ -12,8 +13,16 @@ import random
 import numpy as np
 import torch
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = '1'
+import argparse
+#os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 os.environ["WANDB_START_METHOD"] = "thread"
+
+
+EMBEDDING_TYPES =  FASTTEXT_EMBEDDINGS + TRANSFORMERS_EMBEDDINGS
+
+DATAMODULE = MeaningsCollocationsDataModule
+
+PROJECT_NAME = 'Cawi1Collocations'
 
 
 def seed_everything():
@@ -28,8 +37,8 @@ if __name__ == '__main__':
     results = []
     regression = True
 
-    for embeddings_type in ['xlmr', 'bert', 'deberta']:
-        data_module = EmotionsDataModule(embeddings_type=embeddings_type, normalize=regression,
+    for embeddings_type in EMBEDDING_TYPES:
+        data_module = DATAMODULE(embeddings_type=embeddings_type, normalize=regression,
                                          batch_size=1000)
         data_module.prepare_data()
         data_module.setup()
@@ -53,7 +62,7 @@ if __name__ == '__main__':
                     }
 
                     logger = pl_loggers.WandbLogger(
-                        save_dir=LOGS_DIR, config=hparams, project='Emotions', 
+                        save_dir=LOGS_DIR, config=hparams, project=PROJECT_NAME, 
                         log_model=False)
 
                     output_dim = len(data_module.class_dims)
