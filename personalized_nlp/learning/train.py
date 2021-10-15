@@ -14,7 +14,7 @@ from personalized_nlp.utils.callbacks.time import TimingCallback
 
 
 def train_test(datamodule, model, epochs=6, lr=1e-2, experiment_name='default', regression=False,
-               use_cuda=False, test_fold=None, logger=None, log_model=False):
+               use_cuda=False, test_fold=None, logger=None, log_model=False) -> torch.nn.Module:
     """ Train model and return predictions for test dataset"""
     train_loader = datamodule.train_dataloader(test_fold=test_fold)
     val_loader = datamodule.val_dataloader(test_fold=test_fold)
@@ -47,4 +47,5 @@ def train_test(datamodule, model, epochs=6, lr=1e-2, experiment_name='default', 
                          callbacks=[checkpoint_callback])
     trainer.fit(model, train_loader, val_loader)
     trainer.test(test_dataloaders=test_loader)
+    return model.model
 

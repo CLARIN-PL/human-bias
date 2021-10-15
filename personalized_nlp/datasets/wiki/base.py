@@ -10,12 +10,13 @@ import torch
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, Dataset
 
-from personalized_nlp.settings import PROJECT_DIR, STORAGE_DIR
+from personalized_nlp.settings import PROJECT_DIR, STORAGE_DIR, TRANSFORMERS_EMBEDDINGS, FASTTEXT_EMBEDDINGS
 from personalized_nlp.datasets.dataset import BatchIndexedDataset
 from personalized_nlp.utils.tokenizer import get_text_data
 from personalized_nlp.utils.embeddings import create_embeddings
 from personalized_nlp.utils.biases import get_annotator_biases
 from personalized_nlp.datasets.datamodule_base import BaseDataModule
+
 
 
 class WikiDataModule(BaseDataModule):
@@ -24,6 +25,7 @@ class WikiDataModule(BaseDataModule):
             data_dir: str = STORAGE_DIR / 'wiki_data',
             batch_size: int = 3000,
             embeddings_type: str = 'bert',
+            prev_model = None,
             **kwargs,
     ):
         super().__init__()
@@ -44,6 +46,7 @@ class WikiDataModule(BaseDataModule):
         self.test_split_names = ['test']
 
         self.folds_num = 10
+        self.prev_model = prev_model
 
     @property
     def class_dims(self):
@@ -166,3 +169,14 @@ class WikiDataModule(BaseDataModule):
             'annotator_id').agg(neg_conformity=('is_major_vote', 'mean'))
 
         return conformity_df
+
+    @property
+    def text_embedding_dim(self):
+        shift = 10 if self.prev_model is not None else 0
+        print(shift)
+        if self.embeddings_type in ['xlmr', 'bert']:
+            return 768 + shift
+        elif self.embeddings_type in FASTTEXT_EMBEDDINGS:
+            return 300 + shift
+        else:
+            return 1024 + shift

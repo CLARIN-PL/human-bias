@@ -7,9 +7,10 @@ class AggressionDataModule(WikiDataModule):
             data_dir: str = STORAGE_DIR / 'wiki_data',
             batch_size: int = 3000,
             embeddings_type: str = 'bert',
+            model = None,
             **kwargs,
     ):
-        super().__init__(data_dir, batch_size, embeddings_type, **kwargs)
+        super().__init__(data_dir, batch_size, embeddings_type, model, **kwargs)
 
         self.data_path = self.data_dir / 'aggression_annotations.tsv'
         self.data_url = AGGRESSION_URL

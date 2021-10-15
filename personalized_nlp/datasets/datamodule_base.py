@@ -13,6 +13,8 @@ from personalized_nlp.settings import FASTTEXT_EMBEDDINGS, TRANSFORMERS_EMBEDDIN
 
 class BaseDataModule(LightningDataModule):
 
+    prev_model=None
+
     @property
     def words_number(self):
         return self.tokens_sorted.max() + 1
@@ -61,7 +63,7 @@ class BaseDataModule(LightningDataModule):
 
         use_cuda = torch.cuda.is_available()
         create_embeddings(texts, embeddings_path,
-                          model_name=model_name, is_transformer=is_transformer, use_cuda=use_cuda)
+                          model_name=model_name, is_transformer=is_transformer, use_cuda=use_cuda, model=self.prev_model)
 
     def _prepare_dataloader(self, dataset, shuffle=True):
         if shuffle:

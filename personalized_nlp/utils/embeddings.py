@@ -1,3 +1,4 @@
+from types import new_class
 from transformers import AutoTokenizer, AutoModel, AutoModelForMaskedLM
 from transformers import AutoTokenizer, AutoModelForPreTraining
 import torch
@@ -40,7 +41,7 @@ def _get_embeddings_transformers(texts, model_name: str, max_seq_len=256, use_cu
         for i in range(emb[0].size()[0]):
             all_embeddings.append(emb[0][i, mask[i] > 0, :].mean(
                 axis=0)[None, :])  # podejscie nr 2 z usrednianiem
-    print(all_embeddings[0].shape)
+    # print(all_embeddings[0].shape)
     return torch.cat(all_embeddings, axis=0).to('cpu')
 
 
@@ -53,13 +54,28 @@ def _get_embeddings_fasttext(texts, model_name: str, use_cuda: bool) -> torch.Te
         with torch.no_grad():
             emb = torch.tensor(model.get_sentence_vector(batched_text), dtype=torch.float32).unsqueeze(0)
         all_embeddings.append(emb)
-    print(all_embeddings[0].shape)
+    # print(all_embeddings[0].shape)
     return torch.cat(all_embeddings, axis=0).to('cpu')
 
 
-def create_embeddings(texts, embeddings_path, model_name='xlm-roberta-base', is_transformer: bool = True, use_cuda=True,
-                        pickle_embeddings=True):
+def _create_transfer_embeddings(embeddings, model, use_cuda):
+    print("Create transfer learning embeddings...")
+    device = torch.device('cuda' if use_cuda else 'cpu')
+    new_embeddings = []
+    model.to(device)
+    for emb in tqdm(embeddings):
+        emb = emb.unsqueeze(0).to(device)
+        with torch.no_grad():
+            output = model({'embeddings': emb})
+        new_emb = torch.cat([emb, output], axis=1)
+        new_embeddings.append(new_emb)
+    return torch.cat(new_embeddings, axis=0).to('cpu')
 
+
+def create_embeddings(texts, embeddings_path, model_name='xlm-roberta-base', is_transformer: bool = True, use_cuda=True,
+                        pickle_embeddings=True, model=None):
+
+    print("Creating embeddings...")
     if is_transformer:
         embeddings = _get_embeddings_transformers(texts, model_name, use_cuda=use_cuda)
     else:
@@ -67,6 +83,11 @@ def create_embeddings(texts, embeddings_path, model_name='xlm-roberta-base', is_
 
     #print(embeddings.shape)
     #raise None
+    print(embeddings.shape)
+    if model is not None:
+        embeddings = _create_transfer_embeddings(embeddings, model, use_cuda)
+
+    print(embeddings.shape)
     text_idx_to_emb = {}
     for i in range(embeddings.size(0)):
         text_idx_to_emb[i] = embeddings[i].numpy()

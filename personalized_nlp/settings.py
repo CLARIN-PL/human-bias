@@ -15,8 +15,8 @@ TRANSFORMERS_EMBEDDINGS = [
 ]
 
 FASTTEXT_EMBEDDINGS = [
-    'skipgram',
-    'cbow'
+    #'skipgram',
+    #'cbow'
 ]
 
 FASTTEXT_MODELS_PATHS = {
