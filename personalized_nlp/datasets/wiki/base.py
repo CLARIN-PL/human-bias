@@ -26,6 +26,8 @@ class WikiDataModule(BaseDataModule):
             batch_size: int = 3000,
             embeddings_type: str = 'bert',
             prev_model = None,
+            num_features: int = 0,
+            check_path: bool = True,
             **kwargs,
     ):
         super().__init__()
@@ -47,6 +49,8 @@ class WikiDataModule(BaseDataModule):
 
         self.folds_num = 10
         self.prev_model = prev_model
+        self.num_features = num_features
+        self.check_path = check_path
 
     @property
     def class_dims(self):
@@ -87,8 +91,10 @@ class WikiDataModule(BaseDataModule):
             self.data_dir / (self.annotation_column + '_worker_demographics.tsv'), sep='\t')
         self.annotators = self._remap_column_names(self.annotators)
 
-        if not os.path.exists(self.embeddings_path):
-            self._create_embeddings()
+        if self.check_path:
+            if not os.path.exists(self.embeddings_path):
+                self._create_embeddings()
+        self._create_embeddings()
 
         text_idx_to_emb = pickle.load(open(self.embeddings_path, 'rb'))
         embeddings = []
@@ -172,11 +178,9 @@ class WikiDataModule(BaseDataModule):
 
     @property
     def text_embedding_dim(self):
-        shift = 10 if self.prev_model is not None else 0
-        print(shift)
         if self.embeddings_type in ['xlmr', 'bert']:
-            return 768 + shift
+            return 768 + self.num_features
         elif self.embeddings_type in FASTTEXT_EMBEDDINGS:
-            return 300 + shift
+            return 300 + self.num_features
         else:
-            return 1024 + shift
+            return 1024 + self.num_features

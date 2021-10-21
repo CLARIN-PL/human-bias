@@ -86,6 +86,7 @@ def create_embeddings(texts, embeddings_path, model_name='xlm-roberta-base', is_
     print(embeddings.shape)
     if model is not None:
         embeddings = _create_transfer_embeddings(embeddings, model, use_cuda)
+        print("Created TRANSFER LEARNING EMBEDDINGS")
 
     print(embeddings.shape)
     text_idx_to_emb = {}
